@@ -81,6 +81,9 @@ pre { margin:0; padding:30px; font: 14px/2 "SFMono-Regular", Consolas, monospace
 @keyframes pulse { to { opacity:.4; } }
 .contact-box { background:linear-gradient(135deg,#151d1b,#11151a); border:1px solid var(--line); border-radius:18px; padding:60px; }
 .contact-box p:not(.eyebrow) { color:var(--muted); margin:18px 0 28px; }
+.email-line { margin-top: 0; margin-bottom: 24px; color: var(--text); }
+.email-line a { color: var(--accent); }
+.email-line a:hover { color: var(--accent-2); }
 footer { max-width:var(--max); margin:auto; padding:28px 24px 45px; display:flex; justify-content:space-between; color:#68727d; font-size:12px; }
 @media (max-width: 800px) {
   nav a:nth-child(1), nav a:nth-child(2) { display:none; }
