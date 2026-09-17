@@ -12,15 +12,19 @@ if (year) year.textContent = new Date().getFullYear();
 
 window.addEventListener("pointermove", (event) => {
   const { clientX, clientY } = event;
-  cursorDot.style.left = `${clientX}px`;
-  cursorDot.style.top = `${clientY}px`;
-  cursorRing.style.left = `${clientX}px`;
-  cursorRing.style.top = `${clientY}px`;
+  if (cursorDot) {
+    cursorDot.style.left = `${clientX}px`;
+    cursorDot.style.top = `${clientY}px`;
+  }
+  if (cursorRing) {
+    cursorRing.style.left = `${clientX}px`;
+    cursorRing.style.top = `${clientY}px`;
+  }
 });
 
 document.querySelectorAll("a, button").forEach((element) => {
-  element.addEventListener("mouseenter", () => cursorRing.classList.add("active"));
-  element.addEventListener("mouseleave", () => cursorRing.classList.remove("active"));
+  element.addEventListener("mouseenter", () => cursorRing?.classList.add("active"));
+  element.addEventListener("mouseleave", () => cursorRing?.classList.remove("active"));
 });
 
 const pinned = ["Calculator", "RandomGenerator", "Hangman", "RockPaperScissors", "BrokenCode-Examples"];
@@ -75,10 +79,16 @@ function clearBagels() {
   gameArea.querySelectorAll(".bagel").forEach((bagel) => bagel.remove());
 }
 
-function endGame() {
-  gameRunning = false;
+function resetGameState() {
   clearInterval(gameTimer);
   clearInterval(spawnTimer);
+  gameTimer = null;
+  spawnTimer = null;
+  gameRunning = false;
+}
+
+function endGame() {
+  resetGameState();
   if (gameOverlay) {
     gameOverlay.innerHTML = `<h3>Round over</h3><p>You caught ${score} bagel${score === 1 ? "" : "s"}. Hit start to play again.</p>`;
     gameOverlay.style.pointerEvents = "none";
@@ -95,18 +105,20 @@ function spawnBagel() {
   bagel.setAttribute("aria-label", "Catch bagel");
   bagel.textContent = "🥯";
 
-  const maxX = gameArea.clientWidth - 52;
-  const x = Math.max(0, Math.random() * maxX);
+  const maxX = Math.max(12, gameArea.clientWidth - 56);
+  const x = Math.random() * maxX;
   bagel.style.left = `${x}px`;
-  bagel.style.setProperty("--drift", `${(Math.random() * 30 - 15).toFixed(1)}px`);
+  bagel.style.top = "-10px";
+  bagel.style.setProperty("--drift", `${(Math.random() * 28 - 14).toFixed(1)}px`);
 
-  bagel.addEventListener("click", () => {
+  bagel.addEventListener("click", (event) => {
+    event.stopPropagation();
     if (!gameRunning) return;
     score += 1;
     updateScore();
-    bagel.classList.add("missed");
     bagel.disabled = true;
     bagel.textContent = "✨";
+    bagel.classList.add("missed");
     setTimeout(() => bagel.remove(), 150);
   });
 
@@ -128,6 +140,7 @@ function startGame() {
   updateScore();
   updateTime();
 
+  resetGameState();
   gameRunning = true;
   clearBagels();
 
@@ -138,7 +151,7 @@ function startGame() {
 
   if (startButton) startButton.textContent = "Restart";
 
-  spawnTimer = setInterval(spawnBagel, 500);
+  spawnTimer = setInterval(spawnBagel, 550);
   gameTimer = setInterval(() => {
     timeLeft -= 1;
     updateTime();
