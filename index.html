@@ -3,19 +3,25 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b0d10">
   <meta name="description" content="Harley Jones — student and software developer.">
   <title>Harley Jones | Software Developer</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div class="cursor-dot" aria-hidden="true"></div>
+  <div class="cursor-ring" aria-hidden="true"></div>
+
   <header class="nav">
     <a class="brand" href="#top">harley<span>loves</span>bagels</a>
     <nav>
       <a href="#about">About</a>
       <a href="#projects">Projects</a>
+      <a href="#play">Play</a>
       <a href="https://github.com/HarleyLovesBagels" target="_blank" rel="noreferrer">GitHub ↗</a>
     </nav>
   </header>
@@ -74,9 +80,40 @@ open source
       </div>
     </section>
 
+    <section class="section play" id="play">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">03 / PLAY</p>
+          <h2>Bagel breaker.</h2>
+        </div>
+        <span class="pill">Arcade mode</span>
+      </div>
+
+      <div class="game-shell">
+        <div class="game-info">
+          <div class="stat">
+            <span>Score</span>
+            <strong id="score">0</strong>
+          </div>
+          <div class="stat">
+            <span>Time</span>
+            <strong id="time">20</strong>
+          </div>
+          <button id="start-game" class="button primary" type="button">Start game</button>
+        </div>
+
+        <div id="game-area" class="game-area" aria-label="Bagel catching game">
+          <div class="game-overlay">
+            <h3>Catch the bagels</h3>
+            <p>Click every floating bagel before the timer runs out.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="section contact">
       <div class="contact-box">
-        <p class="eyebrow">03 / FIND ME</p>
+        <p class="eyebrow">04 / FIND ME</p>
         <h2>Want to see what I'm working on?</h2>
         <p>My GitHub is where I publish projects and experiments.</p>
         <p class="email-line">Drop me a cheeky email at: <a href="mailto:me@harleylovesbagels.me">me@harleylovesbagels.me</a></p>
