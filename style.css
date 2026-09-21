@@ -181,7 +181,7 @@ pre { margin:0; padding:30px; font: 14px/2 "SFMono-Regular", Consolas, monospace
 .stat span { display:block; color: var(--muted); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; }
 .stat strong { font-size: clamp(20px, 3vw, 28px); font-family: "Space Grotesk", sans-serif; letter-spacing: -.05em; }
 .game-area {
-  position: relative; height: 350px; border-top: 1px solid var(--line); background:
+  position: relative; height: 500px; border-top: 1px solid var(--line); background:
     linear-gradient(180deg, rgba(107, 182, 255, 0.08), rgba(255,255,255,0) 38%),
     radial-gradient(circle at 50% 10%, rgba(122, 215, 255, 0.18), transparent 40%),
     rgba(10,12,14,.8);
