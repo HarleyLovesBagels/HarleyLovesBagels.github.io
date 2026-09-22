@@ -233,17 +233,47 @@
 
       items.forEach((item) => {
         const li = document.createElement("li");
-        const linkMarkup = item.link ? `<a class="item-link" href="${item.link}" target="_blank" rel="noreferrer">${item.link}</a>` : "";
-        li.innerHTML = `
-          <div class="item-top">
-            <strong>${item.title}</strong>
-            <span class="badge">${item.priority}</span>
-          </div>
-          ${linkMarkup}
-          <p class="item-notes">${item.notes || "No notes"}</p>
-          <button class="small-btn danger" type="button">Remove</button>
-        `;
-        li.querySelector("button").addEventListener("click", () => removeItem(item.id));
+        const top = document.createElement("div");
+        top.className = "item-top";
+
+        const title = document.createElement("strong");
+        title.textContent = item.title;
+
+        const badge = document.createElement("span");
+        badge.className = "badge";
+        badge.textContent = item.priority;
+
+        top.appendChild(title);
+        top.appendChild(badge);
+        li.appendChild(top);
+
+        if (item.link) {
+          try {
+            const parsed = new URL(item.link);
+            if (parsed.protocol === "http:" || parsed.protocol === "https:") {
+              const link = document.createElement("a");
+              link.className = "item-link";
+              link.href = parsed.toString();
+              link.target = "_blank";
+              link.rel = "noreferrer";
+              link.textContent = item.link;
+              li.appendChild(link);
+            }
+          } catch {}
+        }
+
+        const notes = document.createElement("p");
+        notes.className = "item-notes";
+        notes.textContent = item.notes || "No notes";
+        li.appendChild(notes);
+
+        const remove = document.createElement("button");
+        remove.className = "small-btn danger";
+        remove.type = "button";
+        remove.textContent = "Remove";
+        remove.addEventListener("click", () => removeItem(item.id));
+        li.appendChild(remove);
+
         wishlistList.appendChild(li);
       });
     }
