@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wishlist</title>
+  <style>
+    :root {
+      --bg: #090d14;
+      --panel: rgba(16, 22, 30, 0.9);
+      --line: rgba(146, 175, 214, 0.22);
+      --text: #edf6ff;
+      --muted: #a4b4c8;
+      --accent: #9bf6c8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(180deg, #090d14, #0f1725);
+      color: var(--text);
+      font-family: "DM Sans", "Segoe UI", sans-serif;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+    main {
+      width: min(860px, 100%);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--panel);
+      box-shadow: 0 20px 50px rgba(4, 8, 15, 0.45);
+      overflow: hidden;
+    }
+    .head {
+      border-bottom: 1px solid var(--line);
+      padding: 20px 24px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    h1 { margin: 0; font-size: 1.5rem; }
+    .muted { color: var(--muted); margin: 8px 0 0; }
+    .body { padding: 24px; }
+    ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+    li {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px;
+      background: rgba(8, 12, 18, 0.72);
+    }
+    .item-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: start;
+    }
+    .badge {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.72rem;
+      padding: 4px 8px;
+      color: var(--muted);
+    }
+    .item-notes { color: var(--muted); margin: 8px 0; }
+    .item-link { color: var(--accent); word-break: break-word; }
+    .empty {
+      color: var(--muted);
+      border: 1px dashed var(--line);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    button {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      font: inherit;
+      padding: 10px 14px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="head">
+      <div>
+        <h1>Wishlist</h1>
+        <p class="muted">Public viewer page.</p>
+      </div>
+      <button id="refresh-btn" type="button">Refresh</button>
+    </section>
+    <section class="body">
+      <ul id="wishlist-list"></ul>
+    </section>
+  </main>
+
+  <script>
+    const STORAGE_KEY = "internalWishlistItems";
+    const wishlistList = document.getElementById("wishlist-list");
+    const refreshBtn = document.getElementById("refresh-btn");
+
+    function loadItems() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function renderItems() {
+      const items = loadItems();
+      wishlistList.innerHTML = "";
+
+      if (items.length === 0) {
+        const li = document.createElement("li");
+        li.className = "empty";
+        li.textContent = "No wishlist items available yet.";
+        wishlistList.appendChild(li);
+        return;
+      }
+
+      items.forEach((item) => {
+        const li = document.createElement("li");
+        const top = document.createElement("div");
+        top.className = "item-top";
+
+        const title = document.createElement("strong");
+        title.textContent = item.title || "Untitled";
+
+        const badge = document.createElement("span");
+        badge.className = "badge";
+        badge.textContent = item.priority || "medium";
+
+        top.appendChild(title);
+        top.appendChild(badge);
+        li.appendChild(top);
+
+        if (item.link) {
+          try {
+            const parsed = new URL(item.link);
+            if (parsed.protocol === "http:" || parsed.protocol === "https:") {
+              const link = document.createElement("a");
+              link.className = "item-link";
+              link.href = parsed.toString();
+              link.target = "_blank";
+              link.rel = "noreferrer";
+              link.textContent = item.link;
+              li.appendChild(link);
+            }
+          } catch {}
+        }
+
+        const notes = document.createElement("p");
+        notes.className = "item-notes";
+        notes.textContent = item.notes || "No notes";
+        li.appendChild(notes);
+
+        wishlistList.appendChild(li);
+      });
+    }
+
+    refreshBtn.addEventListener("click", renderItems);
+    window.addEventListener("storage", renderItems);
+    renderItems();
+  </script>
+</body>
+</html>

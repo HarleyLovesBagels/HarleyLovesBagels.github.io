@@ -12,3 +12,4 @@ The Projects section reads public repositories from the GitHub API for `HarleyLo
 
 - Secret URL: `/internal-wishlist-vault-7f91a2.html`
 - Password validation uses SHA-256 hash checking inside the editor page.
+- Public view page: `/wishlist-public.html` (not linked from the main site navigation).

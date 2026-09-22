@@ -117,6 +117,18 @@
       padding: 8px 10px;
       font-size: 0.85rem;
     }
+    .button-link {
+      width: 100%;
+      display: grid;
+      place-items: center;
+      padding: 11px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 600;
+    }
   </style>
 </head>
 <body>
@@ -160,6 +172,7 @@
         <button id="export-btn" class="ghost" type="button">Export JSON</button>
         <button id="clear-btn" class="danger" type="button">Clear all</button>
         <button id="lock-btn" class="ghost" type="button">Lock editor</button>
+        <a class="button-link" href="/wishlist-public.html" target="_blank" rel="noreferrer">Open public wishlist page</a>
       </div>
 
       <p id="editor-status" class="status" aria-live="polite"></p>
