@@ -28,6 +28,7 @@ document.querySelectorAll("a, button").forEach((element) => {
 });
 
 const pinned = ["Calculator", "RandomGenerator", "Hangman", "RockPaperScissors", "BrokenCode-Examples"];
+const hiddenRepos = ["SloppyAI-MarketingPlan-Website", "RGG"];
 
 function card(repo) {
   const description = repo.description || "A project by Harley Jones.";
@@ -50,11 +51,12 @@ async function loadRepos() {
     const res = await fetch("https://api.github.com/users/HarleyLovesBagels/repos?sort=updated&per_page=100");
     if (!res.ok) throw new Error("GitHub API error");
     const repos = await res.json();
-    repos.sort((a,b) => {
+    const visibleRepos = repos.filter((repo) => !hiddenRepos.includes(repo.name));
+    visibleRepos.sort((a,b) => {
       const ai = pinned.indexOf(a.name), bi = pinned.indexOf(b.name);
       return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
     });
-    grid.innerHTML = repos.slice(0, 6).map(card).join("");
+    grid.innerHTML = visibleRepos.slice(0, 6).map(card).join("");
   } catch {
     grid.innerHTML = `<article class="repo"><h3>GitHub</h3><p>Projects are available on my GitHub profile.</p><a class="repo-link" href="https://github.com/HarleyLovesBagels" target="_blank" rel="noreferrer">Open GitHub ↗</a></article>`;
   }

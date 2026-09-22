@@ -7,3 +7,5 @@ Personal portfolio website for Harley Jones.
 This is a static HTML/CSS/JS site. Upload the three files to your web host or use GitHub Pages, Cloudflare Pages, Netlify, or Vercel.
 
 The Projects section reads public repositories from the GitHub API for `HarleyLovesBagels`.
+
+To hide repositories from the Projects section, add their exact names to the `hiddenRepos` array in `script.js`.
