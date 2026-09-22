@@ -11,5 +11,4 @@ The Projects section reads public repositories from the GitHub API for `HarleyLo
 ## Internal wishlist maker
 
 - Secret URL: `/internal-wishlist-vault-7f91a2.html`
-- Password: `BagelVault!2026`
-- Password validation uses SHA-256 hash checking inside the editor page (no plaintext password is stored in code beyond this setup note).
+- Password validation uses SHA-256 hash checking inside the editor page.
