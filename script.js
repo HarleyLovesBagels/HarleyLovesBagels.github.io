@@ -61,7 +61,7 @@ async function loadRepos() {
 }
 
 let score = 0;
-let timeLeft = 20;
+let timeLeft = 30;
 let gameTimer = null;
 let spawnTimer = null;
 let gameRunning = false;
@@ -103,13 +103,12 @@ function spawnBagel() {
   bagel.type = "button";
   bagel.className = "bagel";
   bagel.setAttribute("aria-label", "Catch bagel");
-  bagel.textContent = "🥯";
 
-  const maxX = Math.max(12, gameArea.clientWidth - 56);
+  const maxX = Math.max(12, gameArea.clientWidth - 72);
   const x = Math.random() * maxX;
   bagel.style.left = `${x}px`;
-  bagel.style.top = "-10px";
-  bagel.style.setProperty("--drift", `${(Math.random() * 28 - 14).toFixed(1)}px`);
+  bagel.style.top = "-16px";
+  bagel.style.setProperty("--drift", `${(Math.random() * 20 - 10).toFixed(1)}px`);
 
   bagel.addEventListener("click", (event) => {
     event.stopPropagation();
@@ -117,7 +116,6 @@ function spawnBagel() {
     score += 1;
     updateScore();
     bagel.disabled = true;
-    bagel.textContent = "✨";
     bagel.classList.add("missed");
     setTimeout(() => bagel.remove(), 150);
   });
@@ -129,14 +127,14 @@ function spawnBagel() {
       bagel.classList.add("missed");
       setTimeout(() => bagel.remove(), 180);
     }
-  }, 1800);
+  }, 2800);
 }
 
 function startGame() {
   if (!gameArea) return;
 
   score = 0;
-  timeLeft = 20;
+  timeLeft = 30;
   updateScore();
   updateTime();
 
@@ -151,7 +149,7 @@ function startGame() {
 
   if (startButton) startButton.textContent = "Restart";
 
-  spawnTimer = setInterval(spawnBagel, 550);
+  spawnTimer = setInterval(spawnBagel, 700);
   gameTimer = setInterval(() => {
     timeLeft -= 1;
     updateTime();
