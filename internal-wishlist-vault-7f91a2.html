@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Internal Wishlist Maker</title>
+  <style>
+    :root {
+      --bg: #090d14;
+      --panel: rgba(16, 22, 30, 0.9);
+      --line: rgba(146, 175, 214, 0.22);
+      --text: #edf6ff;
+      --muted: #a4b4c8;
+      --accent: #9bf6c8;
+      --danger: #ff7b7b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(180deg, #090d14, #0f1725);
+      color: var(--text);
+      font-family: "DM Sans", "Segoe UI", sans-serif;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+    .shell {
+      width: min(860px, 100%);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--panel);
+      box-shadow: 0 20px 50px rgba(4, 8, 15, 0.45);
+      overflow: hidden;
+    }
+    .head {
+      border-bottom: 1px solid var(--line);
+      padding: 20px 24px;
+    }
+    h1 { margin: 0; font-size: 1.6rem; }
+    .muted { color: var(--muted); margin-top: 8px; }
+    .body { padding: 24px; }
+    form {
+      display: grid;
+      gap: 12px;
+    }
+    label { font-weight: 600; }
+    input, textarea, select, button {
+      width: 100%;
+      padding: 11px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: rgba(8, 12, 18, 0.9);
+      color: var(--text);
+      font: inherit;
+    }
+    textarea { min-height: 90px; resize: vertical; }
+    .btn-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+    button {
+      background: linear-gradient(135deg, #c1ffe8, #9bf6c8);
+      color: #07110c;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    button.ghost {
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+    }
+    button.danger {
+      background: rgba(255, 123, 123, 0.12);
+      color: #ffd2d2;
+      border-color: rgba(255, 123, 123, 0.35);
+    }
+    .status { min-height: 22px; margin-top: 6px; color: var(--muted); }
+    .status.error { color: var(--danger); }
+    .hidden { display: none; }
+    ul {
+      margin: 16px 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 10px;
+    }
+    li {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px;
+      background: rgba(8, 12, 18, 0.72);
+    }
+    .item-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: start;
+    }
+    .badge {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-size: 0.72rem;
+      padding: 4px 8px;
+      color: var(--muted);
+    }
+    .item-notes { color: var(--muted); margin: 8px 0; }
+    .item-link {
+      color: var(--accent);
+      word-break: break-word;
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+    .small-btn {
+      width: auto;
+      padding: 8px 10px;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="head">
+      <h1>Internal Wishlist Maker</h1>
+      <p class="muted">Private editor — keep this URL secret.</p>
+    </section>
+
+    <section id="login-section" class="body">
+      <form id="login-form">
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required>
+        <button type="submit">Unlock editor</button>
+      </form>
+      <p id="login-status" class="status" aria-live="polite"></p>
+    </section>
+
+    <section id="editor-section" class="body hidden">
+      <form id="wishlist-form">
+        <label for="wish-title">Wish title</label>
+        <input id="wish-title" name="wish-title" required>
+
+        <label for="wish-link">Link (optional)</label>
+        <input id="wish-link" name="wish-link" type="url" placeholder="https://...">
+
+        <label for="wish-priority">Priority</label>
+        <select id="wish-priority" name="wish-priority">
+          <option value="high">High</option>
+          <option value="medium" selected>Medium</option>
+          <option value="low">Low</option>
+        </select>
+
+        <label for="wish-notes">Notes (optional)</label>
+        <textarea id="wish-notes" name="wish-notes" placeholder="Size, color, extra details..."></textarea>
+
+        <button type="submit">Add wishlist item</button>
+      </form>
+
+      <div class="btn-row">
+        <button id="export-btn" class="ghost" type="button">Export JSON</button>
+        <button id="clear-btn" class="danger" type="button">Clear all</button>
+        <button id="lock-btn" class="ghost" type="button">Lock editor</button>
+      </div>
+
+      <p id="editor-status" class="status" aria-live="polite"></p>
+      <ul id="wishlist-list"></ul>
+    </section>
+  </main>
+
+  <script>
+    const SECRET_PASSWORD_HASH = "03a4edd7c86975bc5769da8c417c99a5c680ee89929871e0a6f0bcb184343f88";
+    const STORAGE_KEY = "internalWishlistItems";
+    const SESSION_KEY = "internalWishlistUnlocked";
+
+    const loginSection = document.getElementById("login-section");
+    const editorSection = document.getElementById("editor-section");
+    const loginForm = document.getElementById("login-form");
+    const loginStatus = document.getElementById("login-status");
+    const wishlistForm = document.getElementById("wishlist-form");
+    const wishlistList = document.getElementById("wishlist-list");
+    const editorStatus = document.getElementById("editor-status");
+    const exportBtn = document.getElementById("export-btn");
+    const clearBtn = document.getElementById("clear-btn");
+    const lockBtn = document.getElementById("lock-btn");
+
+    function setStatus(element, message, isError = false) {
+      element.textContent = message;
+      element.classList.toggle("error", isError);
+    }
+
+    async function sha256Hex(text) {
+      const data = new TextEncoder().encode(text);
+      const digest = await crypto.subtle.digest("SHA-256", data);
+      return Array.from(new Uint8Array(digest)).map((b) => b.toString(16).padStart(2, "0")).join("");
+    }
+
+    function constantTimeEqual(a, b) {
+      if (a.length !== b.length) return false;
+      let diff = 0;
+      for (let i = 0; i < a.length; i += 1) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+      return diff === 0;
+    }
+
+    function loadItems() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function saveItems(items) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    }
+
+    function removeItem(id) {
+      const next = loadItems().filter((item) => item.id !== id);
+      saveItems(next);
+      renderItems();
+      setStatus(editorStatus, "Item removed.");
+    }
+
+    function renderItems() {
+      const items = loadItems();
+      wishlistList.innerHTML = "";
+
+      if (items.length === 0) {
+        wishlistList.innerHTML = "<li><p class='muted'>No wishlist items yet.</p></li>";
+        return;
+      }
+
+      items.forEach((item) => {
+        const li = document.createElement("li");
+        const linkMarkup = item.link ? `<a class="item-link" href="${item.link}" target="_blank" rel="noreferrer">${item.link}</a>` : "";
+        li.innerHTML = `
+          <div class="item-top">
+            <strong>${item.title}</strong>
+            <span class="badge">${item.priority}</span>
+          </div>
+          ${linkMarkup}
+          <p class="item-notes">${item.notes || "No notes"}</p>
+          <button class="small-btn danger" type="button">Remove</button>
+        `;
+        li.querySelector("button").addEventListener("click", () => removeItem(item.id));
+        wishlistList.appendChild(li);
+      });
+    }
+
+    function lockEditor() {
+      sessionStorage.removeItem(SESSION_KEY);
+      editorSection.classList.add("hidden");
+      loginSection.classList.remove("hidden");
+      loginForm.reset();
+      setStatus(loginStatus, "Editor locked.");
+    }
+
+    function unlockEditor() {
+      loginSection.classList.add("hidden");
+      editorSection.classList.remove("hidden");
+      renderItems();
+    }
+
+    loginForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      setStatus(loginStatus, "Checking password...");
+
+      const password = new FormData(loginForm).get("password") || "";
+      const hash = await sha256Hex(String(password));
+      if (!constantTimeEqual(hash, SECRET_PASSWORD_HASH)) {
+        setStatus(loginStatus, "Incorrect password.", true);
+        return;
+      }
+
+      sessionStorage.setItem(SESSION_KEY, "1");
+      setStatus(loginStatus, "Unlocked.");
+      unlockEditor();
+    });
+
+    wishlistForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const formData = new FormData(wishlistForm);
+      const title = String(formData.get("wish-title") || "").trim();
+      const link = String(formData.get("wish-link") || "").trim();
+      const priority = String(formData.get("wish-priority") || "medium");
+      const notes = String(formData.get("wish-notes") || "").trim();
+
+      if (!title) {
+        setStatus(editorStatus, "Title is required.", true);
+        return;
+      }
+
+      const items = loadItems();
+      const item = {
+        id: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+        title,
+        link,
+        priority,
+        notes,
+        createdAt: new Date().toISOString()
+      };
+
+      items.unshift(item);
+      saveItems(items);
+      wishlistForm.reset();
+      document.getElementById("wish-priority").value = "medium";
+      renderItems();
+      setStatus(editorStatus, "Item added.");
+    });
+
+    exportBtn.addEventListener("click", () => {
+      const data = JSON.stringify(loadItems(), null, 2);
+      const blob = new Blob([data], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = "wishlist.json";
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      URL.revokeObjectURL(url);
+      setStatus(editorStatus, "Wishlist exported.");
+    });
+
+    clearBtn.addEventListener("click", () => {
+      if (!confirm("Clear all wishlist items?")) return;
+      saveItems([]);
+      renderItems();
+      setStatus(editorStatus, "Wishlist cleared.");
+    });
+
+    lockBtn.addEventListener("click", lockEditor);
+
+    if (sessionStorage.getItem(SESSION_KEY) === "1") unlockEditor();
+  </script>
+</body>
+</html>
