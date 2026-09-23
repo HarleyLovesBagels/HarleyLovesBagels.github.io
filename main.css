@@ -1,0 +1,120 @@
+:root {
+  --primary: #42A5F5;
+  --secondary: #81C784;
+}
+
+body {
+  margin: 0;
+
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.topbar {
+  display: block;
+
+  margin: auto;
+
+  padding-top: 0.5dvh;
+  padding-bottom: 0.5dvh;
+
+  text-align: center;
+  align-items: center;
+  justify-items: center;
+
+  height: 4dvh;
+}
+
+.topbar p {
+  font-size: x-large;
+  font-weight: 900;
+
+  margin: auto;
+  padding: auto;
+
+  color: white;
+  text-shadow: 2px 2px 2px #000000;
+}
+
+/* About Section */
+
+.about {
+  padding: 1rem;
+}
+
+.subtext {
+  margin-bottom: 4dvh;
+}
+
+button {
+  border: none;
+
+  padding-top: 1.5dvh;
+  padding-bottom: 1.5dvh;
+  padding-left: 2.5dvw;
+  padding-right: 2.5dvw;
+
+  font-weight: 900;
+  border-radius: 10px;
+}
+
+button:hover {
+  box-shadow: 2px 2px 2px #000000;
+}
+
+.github-btn {
+  color: black;
+  border: none;
+
+  margin-top: 1.5dvh;
+
+  padding-top: 1.5dvh;
+  padding-bottom: 1.5dvh;
+  padding-left: 2.5dvw;
+  padding-right: 2.5dvw;
+
+  font-weight: 700;
+  border-radius: 10px;
+
+  text-decoration: none;
+}
+
+.github-btn:hover {
+  box-shadow: 2px 2px 2px #000000;
+}
+
+.terminal {
+  color: white;
+  background: #000000;
+
+  margin-top: 4dvh;
+  padding-top: 1dvh;
+  padding-bottom: 1dvh;
+  padding-left: 2dvw;
+
+  border-radius: 20px;
+}
+
+.grey-terminal {
+  color: grey;
+}
+
+/* Accent classes */
+
+.accent-primary {
+  color: var(--primary);
+}
+
+.accent-secondary {
+  color: var(--secondary);
+}
+
+.accent-primary-bg {
+  background: var(--primary);
+}
+
+.accent-secondary-bg {
+  background: var(--secondary);
+}
