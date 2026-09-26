@@ -24,7 +24,7 @@ body {
   align-items: center;
   justify-items: center;
 
-  height: 4dvh;
+  height: 2rem;
 }
 
 .topbar p {
@@ -41,6 +41,9 @@ body {
 /* About Section */
 
 .about {
+  display: flex;
+  flex-direction: column;
+
   padding: 1rem;
 }
 
@@ -95,10 +98,23 @@ button:hover {
   padding-left: 2dvw;
 
   border-radius: 20px;
+
+  min-width: 500px;
 }
 
 .grey-terminal {
   color: grey;
+  opacity: calc(100%*1dvh/100);
+}
+
+.footer {
+  display: block;
+
+  color: grey;
+  background: gainsboro;
+
+  padding: 1rem;
+  margin: 0;
 }
 
 /* Accent classes */
